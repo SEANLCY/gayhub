@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="猜你的年齡互動遊戲，輸入年齡體驗趣味結果">
+    <title>猜你的年齡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        header {
+            background: #0080ff;
+            padding: 1rem;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+        h1 {
+            color: #333;
+            margin: 1rem 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        input[type="number"] {
+            padding: 8px;
+            font-size: 16px;
+            margin: 10px;
+            width: 100px;
+        }
+        #progressBarContainer {
+            width: 300px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+            position: relative;
+        }
+        #progressBar {
+            width: 0;
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px 0 0 10px;
+        }
+        @keyframes progress {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        #progressBar.animate {
+            animation: progress 3s linear forwards;
+        }
+        #progressText {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: #333;
+            font-size: 14px;
+        }
+        #result {
+            font-size: 24px;
+            color: #333;
+            display: none;
+            text-align: center;
+        }
+        #extraMessage {
+            font-size: 18px;
+            color: #e74c3c;
+            margin-top: 10px;
+            display: none;
+        }
+        #errorMessage {
+            color: red;
+            display: none;
+            margin: 10px;
+        }
+        #resetButton {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 50px;
+                left: 0;
+                background: #2c3e50;
+                padding: 1rem;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav role="navigation">
+            <div class="logo">個人首頁</div>
+            <div class="hamburger" aria-label="選單" aria-expanded="false">☰</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">首頁</a></li>
+                <li><a href="index.html#about">關於</a></li>
+                <li><a href="flowers.html">作品展示</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>猜你的年齡</h1>
+        <button id="startButton" onclick="startGame()">開始</button>
+        <form id="ageForm" onsubmit="submitAge(); return false;" style="display: none;">
+            <label for="ageInput">請輸入你的年齡：</label>
+            <input type="number" id="ageInput" min="0" max="150" required>
+            <div id="errorMessage">請輸入有效的年齡！</div>
+            <button type="submit">提交</button>
+        </form>
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+            <div id="progressText">載入中...</div>
+        </div>
+        <div id="result" aria-live="polite"></div>
+        <div id="extraMessage" aria-live="polite"></div>
+        <button id="resetButton" onclick="resetGame()">重新計算</button>
+    </main>
+    <script>
+        function startGame() {
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('ageForm').style.display = 'block';
+        }
+
+        function submitAge() {
+            const age = document.getElementById('ageInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+            if (age === '' || age < 0 || age > 150) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+            errorMessage.style.display = 'none';
+            document.getElementById('ageForm').style.display = 'none';
+            document.getElementById('progressBarContainer').style.display = 'block';
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            progressBar.style.width = '0';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressText.textContent = `載入中... ${progress}%`;
+                if (progress >= 100) clearInterval(interval);
+            }, 30);
+            
+            setTimeout(() => {
+                progressBar.classList.add('animate');
+            }, 10);
+            
+            setTimeout(() => {
+                document.getElementById('progressBarContainer').style.display = 'none';
+                progressBar.classList.remove('animate');
+                const result = document.getElementById('result');
+                const extraMessage = document.getElementById('extraMessage');
+                const resetButton = document.getElementById('resetButton');
+                result.textContent = `你的年齡為：${age}`;
+                result.style.display = 'block';
+                
+                
+                if (age > 68) {
+                    extraMessage.textContent = '韓國瑜都比你年輕';
+                }
+                extraMessage.style.display = 'block';
+                resetButton.style.display = 'block';
+            }, 3000);
+        }
+
+        function resetGame() {
+            document.getElementById('ageForm').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('extraMessage').style.display = 'none';
+            document.getElementById('resetButton').style.display = 'none';
+            document.getElementById('ageInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const isExpanded = navLinks.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', isExpanded);
+        });
+    </script>
+</body>
+</html>

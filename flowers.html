@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="李忠諺的作品展示，包含花卉介紹與猜年齡互動遊戲">
+    <title>作品展示</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            text-align: center;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: #0080ff;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .logo {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            transition: all 0.3s ease-in-out;
+        }
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+        .content {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        button, .shortcut-button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #0080ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+        button:hover, .shortcut-button:hover {
+            background-color: #0080ff;
+            transform: scale(1.05);
+        }
+        #flower-content {
+            font-size: 30px;
+            margin-top: 20px;
+        }
+        #flower-content img {
+            width: 300px;
+            margin-top: 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 50px;
+                left: 0;
+                background: #2c3e50;
+                padding: 1rem;
+                opacity: 0;
+                height: 0;
+            }
+            .nav-links.active {
+                display: flex;
+                opacity: 1;
+                height: auto;
+            }
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+            #flower-content img {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav role="navigation">
+            <div class="logo">個人首頁</div>
+            <div class="hamburger" aria-label="選單" aria-expanded="false">☰</div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">首頁</a></li>
+                <li><a href="index.html#about">關於</a></li>
+                <li><a href="flowers.html">作品展示</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="content" role="main">
+        <h1>作品展示</h1>
+        <div>
+            <button onclick="showTulip()">鬱金香</button>
+            <button onclick="showCarnation()">康乃馨</button>
+            <a href="guess-age.html" class="shortcut-button" aria-label="前往猜你的年齡互動頁面">猜你的年齡</a>
+            <p style="font-size: 16px; color: #555; margin-top: 10px;"></p>
+        </div>
+        <div id="flower-content" aria-live="polite"></div>
+        <a href="index.html" class="back-link">返回個人首頁</a>
+    </section>
+    <script>
+        function showTulip() {
+            const content = document.querySelector('#flower-content');
+            content.innerHTML = `
+                <h2>鬱金香</h2>
+                <p>鬱金香是一種屬於百合科（Liliaceae）鬱金香屬的多年生草本植物，以其優美的花形和鮮豔的色彩而聞名，是全球廣受歡迎的觀賞花卉之一。</p>
+                <img src="20030128.jpg" alt="鬱金香" loading="lazy" onerror="this.alt='鬱金香圖片無法載入'; this.style.border='1px solid #ddd';">
+            `;
+        }
+
+        function showCarnation() {
+            const content = document.querySelector('#flower-content');
+            content.innerHTML = `
+                <h2>康乃馨</h2>
+                <p>康乃馨（學名：Dianthus caryophyllus）是石竹科（Caryophyllaceae）石竹屬的多年生草本植物，以其迷人的花朵和芬芳的香氣成為全球廣受歡迎的觀賞花卉，常被用於花束、插花和園藝裝飾。</p>
+                <img src="紅色康乃馨.jpg" alt="康乃馨" loading="lazy" onerror="this.alt='康乃馨圖片無法載入'; this.style.border='1px solid #ddd';">
+            `;
+        }
+
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const isExpanded = navLinks.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', isExpanded);
+        });
+    </script>
+</body>
+</html>
